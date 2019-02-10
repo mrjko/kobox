@@ -1,0 +1,19 @@
+{ 
+    "copy_pastes" : [
+        {
+            "text" : "newsearchfield"
+        }, 
+        {
+            "text" : "copypaste two"
+        }, 
+        {
+            "text" : "copypaste fjeaofjea"
+        },
+        {
+            "text" : "hello"
+        }, 
+        {
+            "text" : "very nice"
+        }
+    ] 
+}
