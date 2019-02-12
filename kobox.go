@@ -220,7 +220,8 @@ func FileDeleteHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(400)
 		}
 
-		w.WriteHeader(200)
+		fmt.Println("successfully deleted")
+		// w.WriteHeader(200)
 	}
 }
 

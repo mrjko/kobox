@@ -59,23 +59,39 @@ class App extends React.Component {
   }
 
   downloadFile(fileName) {
-    console.log("send backend with this: ", fileName);
     location.replace(backendUrl + /files/ + fileName + "/download");
   }
 
+  uploadFile() {
+    // note: by not adding multipart for form the browser can calculate the boundary itself
+    fetch(backendUrl + "/files/upload", {
+      method: 'POST',
+      body: new FormData(document.querySelector('#uploadForm'))
+    })
+    .then(() => {
+      fetch(backendUrl + "/files")
+      .then((res) => res.json())
+      .then((data) => {
+        self.setState({ 
+          files: data
+        })
+      });
+    });
+  }
+
   removeFile(fileName) {
-    console.log("rmoving file");
     fetch(backendUrl + "/files/" + fileName + "/remove", {
       method: 'DELETE'
     })
-    .then(fetch(backendUrl + "/files")
+    .then(() => {
+      fetch(backendUrl + "/files")
       .then((res) => res.json())
       .then((data) => {
-        this.setState({ 
+        self.setState({ 
           files: data
         })
       })
-    );
+    });
   }
 
   updateCopyPasteText() {
@@ -144,9 +160,9 @@ class App extends React.Component {
           {listOfFiles}
         </section>
 
-        <form action="http://localhost:5000/files/upload" target="_blank" method="post" encType="multipart/form-data">
+        <form id="uploadForm" action="http://localhost:5000/files/upload" target="_blank" method="post" encType="multipart/form-data">
             <input type="file" name="uploadFile" multiple/>
-            <input type="submit" value="Upload File" name="submit"/>
+            <input type="button" onClick={this.uploadFile} value="Upload File" name="submit"/>
         </form>
 
       </section>
