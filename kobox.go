@@ -118,12 +118,11 @@ func CopyPasteHandler(w http.ResponseWriter, r *http.Request) {
 	jsonFile.Close()
 }
 
-func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
+func FilesHandler(w http.ResponseWriter, r *http.Request) {
 	setupResponse(w)
 
 	switch r.Method {
 	case http.MethodGet:
-		fmt.Println("list all files upload GET (my resume)")
 		files, err := ioutil.ReadDir("./files")
 
 		if (err != nil) {
@@ -139,6 +138,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 			b, err := json.Marshal(jsonData)
 			if err != nil {
 				fmt.Println("error:", err)
+				w.WriteHeader(400)
 			}
 
 			var fileData FileData
@@ -146,6 +146,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 
 			if err != nil {
 				fmt.Println(err)
+				w.WriteHeader(400)
 			}
 
 			if (!strings.HasPrefix(f.Name(), ".")) {
@@ -157,17 +158,15 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func FileDownloadHandler(w http.ResponseWriter, r *http.Request) {
+func FileHandler(w http.ResponseWriter, r *http.Request) {
 	setupResponse(w)
+
+	vars := mux.Vars(r)
+	fileName := vars["fileName"]
 
 	switch r.Method {
 	case http.MethodGet:
-		fmt.Printf("file GET specific: %s\n", mux.Vars(r)["fileName"])
-		vars := mux.Vars(r)
-		fileName := vars["fileName"]
-
 		w.Header().Set("Content-Disposition", "attachment; filename=" + fileName)
-
 		streamBytes, err := ioutil.ReadFile("files/" + fileName)
 
 		if (err != nil) {
@@ -176,53 +175,36 @@ func FileDownloadHandler(w http.ResponseWriter, r *http.Request) {
 		} 
 		
 		io.Copy(w, bytes.NewReader(streamBytes))
-		
-	case http.MethodPost:
-		fmt.Println("file upload POST")
-	}
-}
+		w.WriteHeader(200)
 
-func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
-	setupResponse(w)
-
-	switch r.Method {
-	case http.MethodPost:
+	// upload
+	case http.MethodPut:
 		r.ParseMultipartForm(32 << 20)
 		file, handler, err := r.FormFile("uploadFile")
 		if err != nil {
 			fmt.Println(err)
-			return
+			w.WriteHeader(400)
 		}
 		defer file.Close()
-		fmt.Fprintf(w, "%v", handler.Header)
 		f, err := os.OpenFile("./files/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			fmt.Println(err)
-			return
+			w.WriteHeader(400)
 		}
 		defer f.Close()
 		io.Copy(f, file)
-	}
+		w.WriteHeader(200)
 
-	fmt.Println("file upload handler")
-}
-
-func FileDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	setupResponse(w)
-
-	switch r.Method {
+	// delete
 	case http.MethodDelete:
-		vars := mux.Vars(r)
-		fileName := vars["fileName"]
 		err := os.Remove("./files/" + fileName)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(400)
 		}
-
-		fmt.Println("successfully deleted")
-		// w.WriteHeader(200)
+		w.WriteHeader(200)
 	}
+
 }
 
 func main() {
@@ -230,13 +212,16 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", JsonArrayHandler)
 	r.HandleFunc("/copyPaste", CopyPasteHandler)
-	r.HandleFunc("/files", ListFilesHandler);
-	r.HandleFunc("/files/upload", FileUploadHandler);
-	r.HandleFunc("/files/{fileName}/download", FileDownloadHandler);
-	r.HandleFunc("/files/{fileName}/remove", FileDeleteHandler);
 
-	// todo refactor all into one request
-	// r.HandleFunc("/files/{fileName}", FileHandler);
+	/* API: 
+		GET: returns a list of all files
+		POST: upload a new file
+		GET: downlaod the file with name
+		DEL: delete the file with name
+	*/
+		
+	r.HandleFunc("/files", FilesHandler);
+	r.HandleFunc("/files/{fileName}", FileHandler);
 
 	http.Handle("/", r)
 

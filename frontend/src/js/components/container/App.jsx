@@ -59,13 +59,13 @@ class App extends React.Component {
   }
 
   downloadFile(fileName) {
-    location.replace(backendUrl + /files/ + fileName + "/download");
+    location.replace(backendUrl + /files/ + fileName);
   }
 
   uploadFile() {
     // note: by not adding multipart for form the browser can calculate the boundary itself
     fetch(backendUrl + "/files/upload", {
-      method: 'POST',
+      method: 'PUT',
       body: new FormData(document.querySelector('#uploadForm'))
     })
     .then(() => {
@@ -80,7 +80,7 @@ class App extends React.Component {
   }
 
   removeFile(fileName) {
-    fetch(backendUrl + "/files/" + fileName + "/remove", {
+    fetch(backendUrl + "/files/" + fileName, {
       method: 'DELETE'
     })
     .then(() => {
