@@ -190,14 +190,14 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseMultipartForm(32 << 20)
 		file, handler, err := r.FormFile("uploadFile")
 		if err != nil {
-			fmt.Printf(err)
+			fmt.Println(err)
 			return
 		}
 		defer file.Close()
 		fmt.Fprintf(w, "%v", handler.Header)
 		f, err := os.OpenFile("./files/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
-			fmt.Printf(err)
+			fmt.Println(err)
 			return
 		}
 		defer f.Close()
@@ -205,6 +205,23 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("file upload handler")
+}
+
+func FileDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	setupResponse(w)
+
+	switch r.Method {
+	case http.MethodDelete:
+		vars := mux.Vars(r)
+		fileName := vars["fileName"]
+		err := os.Remove("./files/" + fileName)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(400)
+		}
+
+		w.WriteHeader(200)
+	}
 }
 
 func main() {
@@ -215,6 +232,10 @@ func main() {
 	r.HandleFunc("/files", ListFilesHandler);
 	r.HandleFunc("/files/upload", FileUploadHandler);
 	r.HandleFunc("/files/{fileName}/download", FileDownloadHandler);
+	r.HandleFunc("/files/{fileName}/remove", FileDeleteHandler);
+
+	// todo refactor all into one request
+	// r.HandleFunc("/files/{fileName}", FileHandler);
 
 	http.Handle("/", r)
 

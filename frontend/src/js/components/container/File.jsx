@@ -9,15 +9,22 @@ class File extends React.Component {
 	}
 
 	downloadFile() {
-    console.log("download this file: ", this.props.text);
+		console.log("download");
     var fileName = this.props.text;
     this.props.onClick(fileName);
+  }
+
+  removeFile() {
+  	console.log("remove");
+    var fileName = this.props.text;
+  	this.props.onClick(fileName);
   }
 
   render() {
     return (
       <div>
-        <button className="fileName" onClick={this.downloadFile.bind(this)}>{this.props.text}</button>
+        <button className="fileName" onClick={this.props.onDownloadClick.bind(this, this.props.text)}>{this.props.text}</button>
+        <button className="remove" onClick={this.props.onRemoveClick.bind(this, this.props.text)}> x </button>
       </div>
     )
   }

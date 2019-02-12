@@ -58,13 +58,24 @@ class App extends React.Component {
     document.execCommand("copy"); 
   }
 
-  downloadFile() {
-    console.log("send backend with this: ", this.text);
-    location.replace(backendUrl + /files/ + this.text + "/download");
+  downloadFile(fileName) {
+    console.log("send backend with this: ", fileName);
+    location.replace(backendUrl + /files/ + fileName + "/download");
   }
 
-  uploadFile() {
-    console.log("this", this);
+  removeFile(fileName) {
+    console.log("rmoving file");
+    fetch(backendUrl + "/files/" + fileName + "/remove", {
+      method: 'DELETE'
+    })
+    .then(fetch(backendUrl + "/files")
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ 
+          files: data
+        })
+      })
+    );
   }
 
   updateCopyPasteText() {
@@ -108,7 +119,7 @@ class App extends React.Component {
 
     if (this.state.files.length != 0) {
       var listOfFiles = this.state.files.map((item, index) => {
-        return <File text={item.fileName} onClick={this.downloadFile} key={index} />
+        return <File text={item.fileName} onDownloadClick={this.downloadFile} onRemoveClick={this.removeFile} key={index} />
       });
     }
 
