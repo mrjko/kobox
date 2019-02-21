@@ -8,7 +8,7 @@ var isTimeOutSet = false;
 var myTimerEvent;
 var self;
 
-var backendUrl = "http://127.0.0.1:5000"; //  "http://87e49e41.ngrok.io" // 
+var backendUrl = "http://403b9421.ngrok.io"; // "http://127.0.0.1:5000"; //  
 
 class App extends React.Component {
 
