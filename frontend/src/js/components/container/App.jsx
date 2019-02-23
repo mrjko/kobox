@@ -21,8 +21,8 @@ class App extends React.Component {
       jsonData: [],
       copyPasteArea: "",
       files: [],
-      dragging: false
-    };  
+      dragging: false,
+    };    
   }
 
   componentDidMount() {
@@ -133,8 +133,24 @@ class App extends React.Component {
     }
   }
 
-  handleUpload() {
-    console.log("in App.jsx - handleUpload()");
+  onHandleDragIn() {
+    console.log("onhandledragin");
+    self.setState({dragging: true});
+  }
+
+  onHandleDragOut() {
+    console.log("onhandledragout");
+    self.setState({dragging: false});
+  }
+
+  onHandleDrag() {
+    console.log("onhandledrag");
+
+  }
+
+  onHandleDrop() {
+    console.log("onhandledrop");
+
   }
 
   render() {
@@ -166,7 +182,10 @@ class App extends React.Component {
           {listOfFiles}
         </section>
 
-        <DragAndDrop handleUpload={this.handleUpload}>
+        <DragAndDrop dragging={this.state.dragging}
+            onHandleDragIn={this.onHandleDragIn} onHandleDragOut={this.onHandleDragOut}
+            onHandleDrag={this.onHandleDrag}  onHandleDrop={this.onHandleDrop}
+        >
         </DragAndDrop>
 
         <form id="uploadForm" action="http://localhost:5000/files/upload" target="_blank" method="post" encType="multipart/form-data">

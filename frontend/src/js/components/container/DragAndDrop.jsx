@@ -11,9 +11,6 @@ class DragAndDrop extends React.Component {
     this.dragCounter = 0;
   }
 
-  componentDidMount() {
-  }
-
   setUpDragEvent = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -25,7 +22,8 @@ class DragAndDrop extends React.Component {
     this.dragCounter++;
     console.log("dragCounter: ", this.dragCounter);
     if (event.dataTransfer.items && event.dataTransfer.items.length > 0) {
-      this.setState({dragging: true});
+      // this.setState({dragging: true});
+      this.props.onHandleDragIn();
     }
   }
 
@@ -33,8 +31,8 @@ class DragAndDrop extends React.Component {
     self.setUpDragEvent(event);
     console.log("handle drag out");
     this.dragCounter--;
-    console.log("dragCounter: ", this.dragCounter);
-    this.setState({dragging: false});
+    if (this.dragCounter > 0) return
+    this.props.onHandleDragOut();
   }
 
   handleDrag(event) {
@@ -63,10 +61,22 @@ class DragAndDrop extends React.Component {
     dragAndDropDiv.removeEventListener('drop', this.handleDrop);
   }
 
+  addHoverCSS = () => {
+    console.log("add");
+    $(".dragAndDrop").addClass("onHoverTransition");
+  }
+
+  removeHoverCSS = () => {
+    console.log("remove");
+    $(".dragAndDrop").removeClass("onHoverTransition");
+  }
+
+// refactor files list under here
   render() {
+    console.log(self);
     return (
       <div ref={this.dropRef} className="dragAndDrop">
-        <h1> drag and drop area </h1>
+        {this.props.dragging ? self.addHoverCSS() : self.removeHoverCSS() }
       </div>
     )
   }
