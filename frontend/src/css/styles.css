@@ -28,3 +28,10 @@ textarea {
     height: 200px;
     display: inline-flex;
 }
+
+.dragAndDrop {
+    background-color: rgba(0,0,0,0.8);
+    width: auto;
+    height: 200px;
+    color: white;
+}

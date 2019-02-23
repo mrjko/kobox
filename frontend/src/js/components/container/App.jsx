@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import CopyPaste from "./CopyPaste.jsx";
+import DragAndDrop from "./DragAndDrop.jsx";
 import File from "./File.jsx";
 import '../../../css/styles.css';
 
@@ -8,7 +9,7 @@ var isTimeOutSet = false;
 var myTimerEvent;
 var self;
 
-var backendUrl = "http://403b9421.ngrok.io"; // "http://127.0.0.1:5000"; //  
+var backendUrl = "http://699971f2.ngrok.io"; // "http://127.0.0.1:5000"; //  
 
 class App extends React.Component {
 
@@ -19,7 +20,8 @@ class App extends React.Component {
       error: null,
       jsonData: [],
       copyPasteArea: "",
-      files: []
+      files: [],
+      dragging: false
     };  
   }
 
@@ -131,6 +133,10 @@ class App extends React.Component {
     }
   }
 
+  handleUpload() {
+    console.log("in App.jsx - handleUpload()");
+  }
+
   render() {
 
     if (this.state.files.length != 0) {
@@ -159,6 +165,9 @@ class App extends React.Component {
           Files:
           {listOfFiles}
         </section>
+
+        <DragAndDrop handleUpload={this.handleUpload}>
+        </DragAndDrop>
 
         <form id="uploadForm" action="http://localhost:5000/files/upload" target="_blank" method="post" encType="multipart/form-data">
             <input type="file" name="uploadFile" multiple/>
