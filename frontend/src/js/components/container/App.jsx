@@ -9,7 +9,7 @@ var isTimeOutSet = false;
 var myTimerEvent;
 var self;
 
-var backendUrl = "http://699971f2.ngrok.io"; // "http://127.0.0.1:5000"; //  
+var backendUrl = "http://127.0.0.1:5000"; //"http://b130b480.ngrok.io";
 
 class App extends React.Component {
 
@@ -81,17 +81,14 @@ class App extends React.Component {
     });
   }
 
-  uploadFile2(file) {
+  uploadFileDrag(file) {
     let formData = new FormData();
-    formData.append('file', file);
+    formData.append('uploadFile', file);
 
     fetch(backendUrl + "/files/upload", {
-      method: 'POST',
+      method: 'PUT',
       mode: 'cors',
-      body: formData,
-      headers: {
-        'Access-Control-Allow-Origin':'*'
-      }
+      body: formData
     })
     .then(() => {
       fetch(backendUrl + "/files")
@@ -176,7 +173,7 @@ class App extends React.Component {
     self.setState({dragging: false});
     console.log("files", files);
     Array.from(files).forEach(file => { 
-      self.uploadFile2(files);
+      self.uploadFileDrag(file);
     });
   }
 
