@@ -18,9 +18,7 @@ class DragAndDrop extends React.Component {
 
   handleDragIn = (event) => {
     self.setUpDragEvent(event);
-    console.log("handle drag in ");
     this.dragCounter++;
-    console.log("dragCounter: ", this.dragCounter);
     if (event.dataTransfer.items && event.dataTransfer.items.length > 0) {
       // this.setState({dragging: true});
       this.props.onHandleDragIn();
@@ -29,7 +27,6 @@ class DragAndDrop extends React.Component {
 
   handleDragOut = (event) => {
     self.setUpDragEvent(event);
-    console.log("handle drag out");
     this.dragCounter--;
     if (this.dragCounter > 0) return
     this.props.onHandleDragOut();
@@ -40,9 +37,14 @@ class DragAndDrop extends React.Component {
     console.log("handle drag");
   }
 
-  handleDrop(event) {
+  handleDrop = (event) => {
     self.setUpDragEvent(event);
-    console.log("handle drag drop");
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      console.log("HERE HANDLEDROP");
+      this.props.onHandleDrop(event.dataTransfer.files);
+      event.dataTransfer.clearData();
+      this.dragCounter = 0;
+    }
   }
   
   componentDidMount() {

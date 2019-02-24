@@ -81,6 +81,29 @@ class App extends React.Component {
     });
   }
 
+  uploadFile2(file) {
+    let formData = new FormData();
+    formData.append('file', file);
+
+    fetch(backendUrl + "/files/upload", {
+      method: 'POST',
+      mode: 'cors',
+      body: formData,
+      headers: {
+        'Access-Control-Allow-Origin':'*'
+      }
+    })
+    .then(() => {
+      fetch(backendUrl + "/files")
+      .then((res) => res.json())
+      .then((data) => {
+        self.setState({ 
+          files: data
+        })
+      });
+    });
+  }
+
   removeFile(fileName) {
     fetch(backendUrl + "/files/" + fileName, {
       method: 'DELETE'
@@ -148,9 +171,13 @@ class App extends React.Component {
 
   }
 
-  onHandleDrop() {
+  onHandleDrop(files) {
     console.log("onhandledrop");
-
+    self.setState({dragging: false});
+    console.log("files", files);
+    Array.from(files).forEach(file => { 
+      self.uploadFile2(files);
+    });
   }
 
   render() {

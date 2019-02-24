@@ -203,6 +203,24 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(400)
 		}
 		w.WriteHeader(200)
+
+	case http.MethodPost:
+		r.ParseMultipartForm(32 << 20)
+		file, handler, err := r.FormFile("uploadFile")
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(400)
+		}
+		defer file.Close()
+		f, err := os.OpenFile("./files/" + handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(400)
+		}
+		defer f.Close()
+		io.Copy(f, file)
+		w.WriteHeader(200)
+
 	}
 
 }
