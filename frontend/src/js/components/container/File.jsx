@@ -22,7 +22,7 @@ class File extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="file">
         <button className="fileName" onClick={this.props.onDownloadClick.bind(this, this.props.text)}>{this.props.text}</button>
         <button className="remove" onClick={this.props.onRemoveClick.bind(this, this.props.text)}> x </button>
       </div>

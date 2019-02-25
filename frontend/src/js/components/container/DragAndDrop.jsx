@@ -1,4 +1,5 @@
 import React, { useRef, Component } from "react";
+import File from "./File.jsx";
 
 var self;
 
@@ -63,22 +64,32 @@ class DragAndDrop extends React.Component {
     dragAndDropDiv.removeEventListener('drop', this.handleDrop);
   }
 
-  addHoverCSS = () => {
-    console.log("add");
-    $(".dragAndDrop").addClass("onHoverTransition");
-  }
+  // addHoverCSS = () => {
+  //   console.log("add");
+  //   $(".dragAndDropOverlay").addClass("onHoverTransition");
+  // }
 
-  removeHoverCSS = () => {
-    console.log("remove");
-    $(".dragAndDrop").removeClass("onHoverTransition");
-  }
+  // removeHoverCSS = () => {
+  //   console.log("remove");
+  //   $(".dragAndDropOverlay").removeClass("onHoverTransition");
+  // }
 
-// refactor files list under here
   render() {
-    console.log(self);
+    if (this.props.files.length != 0) {
+      var listOfFiles = this.props.files.map((item, index) => {
+        return <File text={item.fileName} onDownloadClick={this.props.downloadFile} onRemoveClick={this.props.removeFile} key={index} />
+      });
+    }
+
     return (
       <div ref={this.dropRef} className="dragAndDrop">
-        {this.props.dragging ? self.addHoverCSS() : self.removeHoverCSS() }
+        Drag & Drop Files
+        {this.props.dragging ? <div className="dragAndDropOverlay"> Drop to upload! </div> : null }
+
+        <section id="filesSection">
+          {listOfFiles}
+        </section>
+
       </div>
     )
   }

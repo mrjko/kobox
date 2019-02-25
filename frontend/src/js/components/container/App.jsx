@@ -2,14 +2,13 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import CopyPaste from "./CopyPaste.jsx";
 import DragAndDrop from "./DragAndDrop.jsx";
-import File from "./File.jsx";
 import '../../../css/styles.css';
 
 var isTimeOutSet = false;
 var myTimerEvent;
 var self;
 
-var backendUrl = "http://127.0.0.1:5000"; //"http://b130b480.ngrok.io";
+var backendUrl = "http://2b4fc446.ngrok.io"; //"http://127.0.0.1:5000";
 
 class App extends React.Component {
 
@@ -179,12 +178,6 @@ class App extends React.Component {
 
   render() {
 
-    if (this.state.files.length != 0) {
-      var listOfFiles = this.state.files.map((item, index) => {
-        return <File text={item.fileName} onDownloadClick={this.downloadFile} onRemoveClick={this.removeFile} key={index} />
-      });
-    }
-
     var copyPasteString = this.state.copyPasteArea;
     $("#copyPasteTarget").val(copyPasteString);
 
@@ -201,14 +194,11 @@ class App extends React.Component {
         <button id="copyPasteBtn" onClick={this.copyToClipBoard}>Fetch & Copy!</button>
         </section>
 
-        <section id="filesSection">
-          Files:
-          {listOfFiles}
-        </section>
-
         <DragAndDrop dragging={this.state.dragging}
             onHandleDragIn={this.onHandleDragIn} onHandleDragOut={this.onHandleDragOut}
             onHandleDrag={this.onHandleDrag}  onHandleDrop={this.onHandleDrop}
+            files={this.state.files} downloadFile={this.downloadFile}
+            removeFile={this.removeFile}
         >
         </DragAndDrop>
 
